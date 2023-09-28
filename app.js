@@ -9,22 +9,8 @@ class MenuHandler {
 	constructor() {
 		this.modal = document.getElementById("modal-overlay");
 		this.navMenuItems = document.querySelectorAll(".menu-item");
-		this.childMenus = Array.from(document.querySelectorAll(".child-menu"));
-		this.parentMenuItems = document.querySelectorAll(".parent-menu-item");
-		this.childMenuLookup = this.createChildMenuLookup();
-	}
-
-	/**
-	 * Creates a lookup object to quickly find child menus based on their parent menu index.
-	 * @returns {Object} A lookup object with parent indices as keys and an array of child menus as values.
-	 */
-	createChildMenuLookup() {
-		return this.childMenus.reduce((lookup, childMenu) => {
-			const parentIndex = childMenu.dataset.parentIndex;
-			lookup[parentIndex] = lookup[parentIndex] || [];
-			lookup[parentIndex].push(childMenu);
-			return lookup;
-		}, {});
+		this.innerMenuItems = document.querySelectorAll(".mega-menu__item");
+		this.megaMenus = document.querySelectorAll(".menu-item__mega-menu");
 	}
 
 	/**
@@ -59,16 +45,43 @@ class MenuHandler {
 	/**
 	 * Initializes parent menu items and binds event listeners for hover interactions with child menus.
 	 */
-	// initParentMenuItems() {
-	// 	this.parentMenuItems.forEach((parentMenuItem, index) => {
+	// initinnerMenuItems() {
+	// 	this.innerMenuItems.forEach((parentMenuItem, index) => {
+	// 		const subMenu = Array.from(parentMenuItem.querySelector(".sub-menu"));
 	// 		parentMenuItem.addEventListener("mouseenter", () => {
-	// 			const relevantChildMenus = this.childMenuLookup[index] || [];
-	// 			relevantChildMenus.forEach((childMenu) => {
-	// 				childMenu.setAttribute("active", "");
-	// 			});
+	// 			subMenu.setAttribute("active", "");
 	// 		});
 	// 	});
 	// }
+
+	/**
+	 * Sets the height of each megamenu according to the largest height of its inner sub-menu.
+	 */
+	setMegaMenuHeight() {
+		this.megaMenus.forEach((megaMenu) => {
+			console.log(this.megaMenus);
+
+			let maxHeight = 0;
+
+			// Locate all inner sub-menus within this megaMenu
+			const innerSubMenus = megaMenu.querySelectorAll(".sub-menu");
+			console.log(innerSubMenus);
+
+			innerSubMenus.forEach((subMenu) => {
+				// Calculate the height of each sub-menu
+				const subMenuHeight = subMenu.offsetHeight;
+				console.log(subMenuHeight);
+
+				// Update maxHeight if this sub-menu is taller
+				if (subMenuHeight > maxHeight) {
+					maxHeight = subMenuHeight;
+				}
+			});
+
+			// Set the height of the megaMenu to the maxHeight
+			// megaMenu.style.minHeight = `${maxHeight}px`;
+		});
+	}
 
 	/**
 	 * Main initialization function, waits for the DOM to load before initializing menu items.
@@ -76,7 +89,8 @@ class MenuHandler {
 	init() {
 		document.addEventListener("DOMContentLoaded", () => {
 			this.initNavMenuItems();
-			this.initParentMenuItems();
+			// this.initinnerMenuItems();
+			this.setMegaMenuHeight();
 		});
 	}
 }
